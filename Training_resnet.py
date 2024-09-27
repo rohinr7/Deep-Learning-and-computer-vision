@@ -1,3 +1,17 @@
+
+""" 
+Author : Rohin Andy Ramesh
+University of Bordeaux
+course: IPCV 
+4TTV911U Deep Learning in Computer Vision
+Lab1 
+
+"""
+
+#just Run this file
+
+
+
 import os
 import os
 import torch
@@ -20,8 +34,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 classname = {
     0: 'Colonial',
     1: 'Modern',
-    2: 'Prehispanic',
-    8: 'Prehispanic'  # Duplicate key might need clarification
+    2: 'Prehispanic' 
 }
 
 def split_data(train_dataset_path,test_dataset_path):
