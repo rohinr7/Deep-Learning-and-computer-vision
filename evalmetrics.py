@@ -26,7 +26,10 @@ def deletion_auc(model, image, input_tensor, saliency, N):
     Returns:
     - deletion_score: The Area Under the Curve (AUC) for the deletion score.
     """
-    
+    if saliency.ndim == 3 and saliency.shape[2] == 3:
+        saliency = np.mean(saliency, axis=2)
+
+
     # Step 1: Get initial prediction score for the target class (before any deletions)
     output = model(input_tensor)
     #initial_score = output.max(1).values.item()  # Get the maximum score as a scalar
@@ -67,6 +70,7 @@ def deletion_auc(model, image, input_tensor, saliency, N):
     # Step 5: Calculate the AUC (Area Under Curve) based on the scores
     #print(f"the deletion scores are : {scores}")
     deletion_score = auc(np.linspace(0, 1, len(scores)), scores)
+    #plot_curve_auc(scores,"deletiion")
     return scores ,deletion_score
 
 
@@ -85,7 +89,9 @@ def insertion_auc(model, image, input_tensor, saliency, N):
     Returns:
     - insertion_score: The Area Under the Curve (AUC) for the insertion score.
     """
-    
+    if saliency.ndim == 3 and saliency.shape[2] == 3:
+        saliency = np.mean(saliency, axis=2)
+
     # Step 1: Create a blurred version of the image as the starting point
     blurred_image = image.filter(ImageFilter.GaussianBlur(radius=10))
     modified_image_np = np.array(blurred_image)  # Convert to NumPy array (H, W, C)
@@ -127,6 +133,7 @@ def insertion_auc(model, image, input_tensor, saliency, N):
     
     # Step 5: Calculate the AUC (Area Under Curve) based on the scores
     insertion_score = auc(np.linspace(0, 1, len(scores)), scores)
+    #plot_curve_auc(scores ,"insertion")
     return scores, insertion_score
 
 
@@ -151,7 +158,11 @@ def plot_curve_auc(scores, method):
     # Plotting
     plt.figure(figsize=(8, 6))
     plt.plot(x, scores, marker='o', color='b', label=f'{method}')
-    plt.xlabel('Percentage of Pixels Deleted')
+    if method == "insertion":
+        plt.xlabel(f'Percentage of Pixels inserted')
+    else: 
+        plt.xlabel(f'Percentage of Pixels deleted')
+    
     plt.ylabel('Prediction Score')
     plt.title(f'{method} Curve (AUC = {auc_value:.4f})')
     plt.legend()
@@ -192,6 +203,8 @@ def calculate_sim(gt, map):
     Returns:
         float: The SSIM between the two images.
     """
+    if map.ndim == 3 and map.shape[2] == 3:
+        map = np.mean(map, axis=2)
 
     gt = (gt - gt.min()) / (gt.max() - gt.min())
     gt = gt / np.sum(gt)
@@ -204,46 +217,6 @@ def calculate_sim(gt, map):
 
 
 
-# if __name__ == '__main__':
 
-   
-#     # Load model and specify image path
-#     model = load_model(r'C:\Users\rohin\Desktop\New folder (3)\DeepLearning in Computer Vision\Final_project\resnet.pt')
-#     model.to(device)
-#     model.eval()
-    
-#     # Load and preprocess the image
-#     image_path = r"C:\Users\rohin\Desktop\New folder (3)\DeepLearning in Computer Vision\archive\MexCulture142\images_val\Colonial_AcademiaDeBellasArtes_Queretaro_N_1.png"
-    
-#     saliency_path = r"C:\Users\rohin\Desktop\New folder (3)\DeepLearning in Computer Vision\archive\MexCulture142\gazefixationsdensitymaps\Colonial_AcademiaDeBellasArtes_Queretaro_GFDM_N_1.png"
-#     gt_saliency = Image.open(saliency_path)
-#     gt_saliency_resized = gt_saliency.resize((224, 224), Image.LANCZOS)
-#     gt_np_sal = np.array(gt_saliency_resized)
-#     gt_saliency_normalized = gt_np_sal / 255.0
-    
-#     image = Image.open(image_path).convert("RGB")
-#     input_batch = data_transform(image).unsqueeze(0).to(device)
-    
-#     # Generate heatmap (saliency map)
-#     heatmap = get_rice_heatmap(model, input_batch)  # Assume this returns a numpy array or tensor
-#     print(f"The type of the heat map is {type(heatmap)} and the shape is {heatmap.shape} max and min is {np.max(heatmap), np.min(heatmap)}")
-#     print(f"The type of the  GT heatmap is {type(gt_saliency_normalized)} and the shape is {gt_saliency_normalized.shape} max and min is {np.max(gt_saliency_normalized), np.min(gt_saliency_normalized)}")
-
-#     pcc = calculate_pcc(gt_np_sal,heatmap)
-#     print(f"the score using pcc is {pcc}")     
-
-#     simm = calculate_sim(gt_np_sal,heatmap)
-#     print(f"the score using pcc is {simm}")     
-
-    # del_scores, delscore = deletion_auc(model,image,input_batch,heatmap,1100)
-    # ins_scores, delscore = insertion_auc(model,image,input_batch,heatmap,500)
-
-    
-    # deletion_auc_value = plot_curve_auc(del_scores, "deletion")
-    # print(f"deletion auc value: {deletion_auc_value}")
-
-    # insertion_auc_value = plot_curve_auc(ins_scores, "insertion")
-    # print(f"insertion auc value: {insertion_auc_value}")
-    
     
     

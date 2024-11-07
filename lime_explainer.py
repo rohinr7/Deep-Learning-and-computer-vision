@@ -80,15 +80,3 @@ class Getlime:
         return img_boundry, mask
         # plt.imshow(img_boundry)
         # plt.show()
-                
-
-# if __name__ == '__main__':
-#     from model import load_model
-
-#     # Load model and specify image path
-#     model = load_model(r'C:\Users\rohin\Desktop\New folder (3)\DeepLearning in Computer Vision\Final_project\resnet.pt') 
-#     image_path = r"C:\Users\rohin\Desktop\New folder (3)\DeepLearning in Computer Vision\archive\MexCulture142\images_val\Colonial_AcademiaDeBellasArtes_Queretaro_N_1.png"
-
-#     # Instantiate Getlime and generate explanation
-#     lime = Getlime(model, image_path)
-#     lime.get_bound_image()
